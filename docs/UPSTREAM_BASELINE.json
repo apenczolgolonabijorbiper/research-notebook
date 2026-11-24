@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "status": "planning-observation-not-install-lock",
+  "observed_date": "2026-11-24",
+  "timezone": "Europe/Warsaw",
+  "production_install_verified": false,
+  "upstreams": [
+    {
+      "repository": "https://github.com/apenczolgolonabijorbiper/golem14-harness",
+      "default_branch": "master",
+      "reviewed_source_commit": "00aba14b49641c3deb9d17d7cc327f6f8578f503",
+      "latest_release_tag": "v0.12.0",
+      "release_target_commitish": "8294f3548176c0d90f891a29b98c08598213bf2a",
+      "release_url": "https://github.com/apenczolgolonabijorbiper/golem14-harness/releases/tag/v0.12.0",
+      "archive": "golem-cognitive-harness-0.12.0.zip",
+      "archive_url": "https://github.com/apenczolgolonabijorbiper/golem14-harness/releases/download/v0.12.0/golem-cognitive-harness-0.12.0.zip",
+      "archive_sha256_from_release_metadata": "9bc17e21d0528e7359006b5bda6c17cce99df3021294e15e2d217d7330627522",
+      "downloaded_archive_verified": false
+    },
+    {
+      "repository": "https://github.com/apenczolgolonabijorbiper/chelm-host",
+      "default_branch": "master",
+      "reviewed_source_commit": "8a0e533c6689f589dba1ec00dd82397d403b3a0b",
+      "latest_release_tag": "v1.2.0",
+      "release_target_commitish": "91641621d8affa43c0cf7d20c7cfb7d95c7777ee",
+      "release_url": "https://github.com/apenczolgolonabijorbiper/chelm-host/releases/tag/v1.2.0",
+      "archive": "chelm-host-1.2.0.zip",
+      "archive_url": "https://github.com/apenczolgolonabijorbiper/chelm-host/releases/download/v1.2.0/chelm-host-1.2.0.zip",
+      "archive_sha256_from_release_metadata": "eb55cd27f8eb8327d0f39f2ff009d69c25d108662106c1e27cf63777c6905b49",
+      "downloaded_archive_verified": false
+    }
+  ],
+  "published_pair": {
+    "host": "1.2.0",
+    "harness": "0.12.0",
+    "compatibility_source": "https://github.com/apenczolgolonabijorbiper/chelm-host/blob/8a0e533c6689f589dba1ec00dd82397d403b3a0b/compatibility.json",
+    "harness_manifest_sha256_from_host_declaration": "52c4fa98a06993bfa4f2504df58a82504e4303a20fd465a09c19140b8d3cfda6"
+  },
+  "source_provider_integration": {
+    "status": "development-build-unpublished",
+    "production_enabled": false,
+    "harness_source_commit": "00aba14b49641c3deb9d17d7cc327f6f8578f503",
+    "host_source_commit": "8a0e533c6689f589dba1ec00dd82397d403b3a0b",
+    "public_host_api_version": 2,
+    "provider_version": 1,
+    "runtime_config": 3,
+    "memory_worker_contract": 3,
+    "note": "Not present in published Harness 0.12.0 archive. Recheck current vendor declarations before implementation."
+  },
+  "sites": {
+    "requirements_reviewed_date": "2026-11-24",
+    "runtime": "Cloudflare Workers",
+    "canonical_host_location": "external persistent runtime",
+    "app_records": "D1",
+    "app_files": "R2",
+    "site_created": false
+  },
+  "approval": {
+    "status": "pending",
+    "tracker": "https://github.com/apenczolgolonabijorbiper/research-notebook/issues/1"
+  }
+}
