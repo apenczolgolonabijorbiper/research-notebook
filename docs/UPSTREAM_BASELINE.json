@@ -8,55 +8,70 @@
     {
       "repository": "https://github.com/apenczolgolonabijorbiper/golem14-harness",
       "default_branch": "master",
-      "reviewed_source_commit": "00aba14b49641c3deb9d17d7cc327f6f8578f503",
-      "latest_release_tag": "v0.12.0",
-      "release_target_commitish": "8294f3548176c0d90f891a29b98c08598213bf2a",
-      "release_url": "https://github.com/apenczolgolonabijorbiper/golem14-harness/releases/tag/v0.12.0",
-      "archive": "golem-cognitive-harness-0.12.0.zip",
-      "archive_url": "https://github.com/apenczolgolonabijorbiper/golem14-harness/releases/download/v0.12.0/golem-cognitive-harness-0.12.0.zip",
-      "archive_sha256_from_release_metadata": "9bc17e21d0528e7359006b5bda6c17cce99df3021294e15e2d217d7330627522",
+      "reviewed_source_commit": "f3248e17de50646484a525c951cf7e48c59efcd0",
+      "latest_release_tag": "v0.13.0",
+      "release_target_commitish": "6b4f39ff5371f6aa3a6b9aac1e82ed680851e39e",
+      "release_url": "https://github.com/apenczolgolonabijorbiper/golem14-harness/releases/tag/v0.13.0",
+      "archive": "golem-cognitive-harness-0.13.0.zip",
+      "archive_url": "https://github.com/apenczolgolonabijorbiper/golem14-harness/releases/download/v0.13.0/golem-cognitive-harness-0.13.0.zip",
+      "archive_sha256_from_release_metadata": "25451b801f5d411d0e35d03567fe8e6cf78d304bcb288556e0566c883cd68a6f",
       "downloaded_archive_verified": false
     },
     {
       "repository": "https://github.com/apenczolgolonabijorbiper/chelm-host",
       "default_branch": "master",
-      "reviewed_source_commit": "8a0e533c6689f589dba1ec00dd82397d403b3a0b",
-      "latest_release_tag": "v1.2.0",
-      "release_target_commitish": "91641621d8affa43c0cf7d20c7cfb7d95c7777ee",
-      "release_url": "https://github.com/apenczolgolonabijorbiper/chelm-host/releases/tag/v1.2.0",
-      "archive": "chelm-host-1.2.0.zip",
-      "archive_url": "https://github.com/apenczolgolonabijorbiper/chelm-host/releases/download/v1.2.0/chelm-host-1.2.0.zip",
-      "archive_sha256_from_release_metadata": "eb55cd27f8eb8327d0f39f2ff009d69c25d108662106c1e27cf63777c6905b49",
+      "reviewed_source_commit": "cd14af43ddf79ef57719c65d8864e42513ed26df",
+      "latest_release_tag": "v1.3.0",
+      "release_target_commitish": "cd14af43ddf79ef57719c65d8864e42513ed26df",
+      "release_url": "https://github.com/apenczolgolonabijorbiper/chelm-host/releases/tag/v1.3.0",
+      "archive": "chelm-host-1.3.0.zip",
+      "archive_url": "https://github.com/apenczolgolonabijorbiper/chelm-host/releases/download/v1.3.0/chelm-host-1.3.0.zip",
+      "archive_sha256_from_release_metadata": "ae3141ad9e6dbecf97542233cc03c8b31a74bbb5a304ca1ee73fde506ab8b159",
       "downloaded_archive_verified": false
     }
   ],
   "published_pair": {
-    "host": "1.2.0",
-    "harness": "0.12.0",
-    "compatibility_source": "https://github.com/apenczolgolonabijorbiper/chelm-host/blob/8a0e533c6689f589dba1ec00dd82397d403b3a0b/compatibility.json",
-    "harness_manifest_sha256_from_host_declaration": "52c4fa98a06993bfa4f2504df58a82504e4303a20fd465a09c19140b8d3cfda6"
+    "host": "1.3.0",
+    "harness": "0.13.0",
+    "compatibility_source": "https://github.com/apenczolgolonabijorbiper/chelm-host/blob/cd14af43ddf79ef57719c65d8864e42513ed26df/compatibility.json",
+    "harness_manifest_sha256_from_host_declaration": "fa8ae35da38a1f64e82336ef99c46fdce35a502c2ff5ebf197e618f10e76e17b"
   },
-  "source_provider_integration": {
-    "status": "development-build-unpublished",
-    "production_enabled": false,
-    "harness_source_commit": "00aba14b49641c3deb9d17d7cc327f6f8578f503",
-    "host_source_commit": "8a0e533c6689f589dba1ec00dd82397d403b3a0b",
-    "public_host_api_version": 2,
+  "memory_provider_integration": {
+    "status": "published",
+    "pin_file": "provider-compatibility.json",
+    "production_enabled": true,
     "provider_version": 1,
+    "host_api_version": 2,
     "runtime_config": 3,
-    "memory_worker_contract": 3,
-    "note": "Not present in published Harness 0.12.0 archive. Recheck current vendor declarations before implementation."
+    "worker_contract": 3,
+    "providers": [
+      "json-git"
+    ]
+  },
+  "planned_runtime": {
+    "execution": "active agent environment",
+    "canonical_backend": "local json-git",
+    "github_memory_required": false,
+    "dedicated_service_required": false,
+    "durable_temporary_session_storage": "private complete-runtime checkpoints; Sites D1 coordinator and R2 objects",
+    "checkpoint_support_status": "new host work, not claimed as shipped in 1.3.0",
+    "host_dependencies": [
+      "https://github.com/apenczolgolonabijorbiper/chelm-host/issues/45",
+      "https://github.com/apenczolgolonabijorbiper/chelm-host/issues/46",
+      "https://github.com/apenczolgolonabijorbiper/chelm-host/issues/47",
+      "https://github.com/apenczolgolonabijorbiper/chelm-host/issues/48"
+    ],
+    "harness_change_required": false
   },
   "sites": {
-    "requirements_reviewed_date": "2026-11-24",
     "runtime": "Cloudflare Workers",
-    "canonical_host_location": "external persistent runtime",
-    "app_records": "D1",
-    "app_files": "R2",
+    "app_records_and_coordinator": "D1",
+    "checkpoint_objects_and_files": "R2",
+    "agent_binding": "explicit authenticated supported tools/HTTP/file transfer, to be validated",
     "site_created": false
   },
   "approval": {
-    "status": "pending",
+    "status": "implementation-pending",
     "tracker": "https://github.com/apenczolgolonabijorbiper/research-notebook/issues/1"
   }
 }

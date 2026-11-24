@@ -1,129 +1,116 @@
 # Sites deployment and scratchbook full reset
 
-Status: proposed for owner review. This document defines requirements; no Site, secret, runtime or reset has been created by this plan.
+Status: revised proposal. No Site, runtime, credential, schedule or deletion is created by this plan.
 
-## 1. Hosting decision
+## 1. Hosting model
 
-The published app is a scratchbook, with persistent data until its administrator chooses full reset.
+The default is **Sites + active agent + local Git + private durable checkpoints**. A dedicated service and a GitHub memory repository are optional, not prerequisites.
 
-Sites currently runs Cloudflare Workers (128 MB per isolate, HTTP-based external connections, no raw TCP). The present upstream engine needs Node 22.12+, Python 3.12+ and Git. A Worker cannot spawn that toolchain or use a durable local Git checkout.
+Sites runs Worker JavaScript; the current host executable path uses Node/Python/Git. Run those in the active Work/Codex/Cursor environment, keeping the canonical memory in a private local instance Git repository separate from app source. Sites stores durable app records/checkpoints and displays the latest saved study while no agent is connected.
 
-Therefore:
-
-- The browser renders the shared notebook UI.
-- A Sites Worker handles authenticated application routes and app persistence.
-- D1 stores scratchbook/study/topic/settings/projection/reset records.
-- R2 stores app-owned source captures, import/export files and generated reports.
-- A scoped HTTPS gateway invokes public Chelm operations on a persistent owner-controlled machine.
-- Chelm owns the canonical runtime and its provider; Harness supplies cognition/validation semantics.
-- Cursor, Codex or Work supplies actual agent inference and available browsing. An executor still has to be connected/invoked; publishing does not turn a chat session into a background service.
-
-This design is compatible with easy publication of the frontend/application layer. A real hosted research workflow additionally needs the reachable persistent runtime. Fixture mode demonstrates UI/evidence navigation immediately and is visibly labelled synthetic.
-
-Do not promise that a static import or browser-only mode executes host+harness. Source-only provider abstraction does not, by itself, make Chelm or its current JSON/Git backend Worker-compatible. D1 in this app is not the optional upstream SQLite memory provider.
-
-## 2. Runtime boundary and connection
-
-The gateway is a narrow app-owned adapter, not a second delegated-work architecture.
-
-Allowlisted operations cover capability/status, authorized intake, task create/get/list/continue/cancel/evidence/learning, projection refresh and reset coordination. Each maps to public upstream APIs. Worker execution continues through Chelm's existing worker transports. Never expose arbitrary shell, file, SQL, module or target-URL execution.
-
-On every call, validate caller/service scope, notebook binding, generation, operation/input bounds and idempotency key. A browser cannot pick a runtime path, principal or provider implementation. A user identity header copied into a public gateway request is not trusted; authenticate the server-to-server channel and map it to fixed authorized scopes.
-
-Use HTTPS from Sites to a reachable gateway. Private tunnel binding is an optional deployment route only if selected account/platform support is observed. Browser code never receives gateway/admin/worker credentials. Configure hosted values in Sites runtime settings and local values outside Git.
-
-For local use the same interface calls Chelm through the local CLI. MCP remains optional for that route.
-
-## 3. Identity and administration
-
-Start with an owner-private Site. Sites provides signed-in request identity; its user ID is scoped to the Site. Identity-dependent pages/routes must use supported server-side auth handling. Missing identity, a public page or possession of a notebook ID does not confer admin rights.
-
-Set administrator IDs through deployment/operator configuration, not through “first visitor becomes admin.” Authorize each reset route/tool on the server. Hide the Admin UI for ordinary readers, but server-side refusal is the control.
-
-Use same-origin POST for mutations, validate origin/CSRF as appropriate, and apply duplicate-submission protection. Do not reset on render, GET, startup, import, migration, deploy, prefetch or reconnect. No reset credential belongs in a URL, source bundle or generated report.
-
-If optional Site MCP operations are implemented, use the platform-supported endpoint/discovery/auth flow and the plugin created by publishing. A view permission is not an admin permission. Preserve per-operation owner/admin checks; tools cannot select an arbitrary notebook/runtime.
-
-## 4. Persistence and source publishing
-
-The GitHub repository is the authoritative app source. Sites may maintain a distinct managed source repository; do not assume pushing GitHub master deploys a Site.
-
-Proposed publication procedure:
-
-1. Select the reviewed GitHub commit and produce a sanitized application source snapshot.
-2. Reuse an existing Site identity or create one only during authorized implementation/publication.
-3. Write the returned project ID exactly into the deployment checkout's .openai/hosting.json; publishable templates contain no fabricated or personal hardcoded Site ID.
-4. Configure logical D1/R2 bindings, owner/admin identity and needed runtime values using supported tools.
-5. Generate and review bounded schema-only D1 migrations; keep seed/fixture loading separate and explicit.
-6. Build a Worker ES module at dist/server/index.js with a default fetch handler and its UI assets; do not mark this connected application as static-only.
-7. Validate, synchronize/package exact source, save that version and deploy through Sites, preserving its audience.
-8. Record the GitHub commit, Sites source commit, archive identity, saved version and deployment status/URL.
-9. Verify authenticated notebook access, durable app data, connected runtime task/citation behavior and admin refusal/reset.
-
-A Site-specific source checkout may track its actual identity as required by Sites; do not commit personal deployment identity into the reusable public sample. Never copy private runtime, credentials, Git history of studies, dependency caches or raw local setup state into that source snapshot.
-
-Ordinary redeploys retain D1/R2 data and runtime bindings. Browser storage contains preferences only; study truth must survive device/session changes. Fixture loading is an explicit user action and never a migration/redeploy seed that repopulates cleared data.
-
-The first release does not depend on Sites calling other connected apps from browser/server code. Agents use their own browsing tools. If future connector actions are added, first perform current Sites eligibility/discovery and consent checks; native tool availability alone does not prove hosted eligibility.
-
-## 5. Full reset scope
-
-Full reset targets the entire scratchbook and its dedicated app-owned sandbox runtime. Optional per-study deletion is a separate later feature; do not call it full reset.
-
-| Store or state | Full reset treatment |
+| Component | Location |
 | --- | --- |
-| Study/topic/source/cycle records and app projections | Delete all old-generation content |
-| Conversations, user replies, result text and cognitive questions | Delete |
-| Canonical observations/evidence, ledger, entities/claims, hypotheses and queues | Reset through supported host sandbox lifecycle |
-| Canonical Git history/provider snapshots and retained source citations | Delete within the dedicated owned reset boundary |
-| Host assignments, staging, task results, receipts with research content and pending learning | Invalidate and remove through host-supported reset/cleanup |
-| App captures, attachments, imported bundles, generated HTML/Markdown/JSON exports | Purge app-controlled file/object namespaces |
-| App-created reset archives, backups and content-bearing logs | Purge only those inside verified app-owned scope |
-| Browser caches/preferences that contain old notebook data | Invalidate by generation; clear this app's controlled entries |
-| Reset control record | Keep minimal content-free request ID/generation/completion state |
-| App source, vendor packages and shipped purpose/profile | Preserve |
-| Site identity, deployment, administrator binding and configured connection secrets | Preserve; revocable generation-specific worker tokens must be replaced/invalidated |
-| Downloaded copies, screenshots, external exports and platform/provider backups outside app control | Outside reset scope; no secure physical-erasure claim |
+| Notebook UI/authenticated routes | Sites Worker and browser |
+| Studies, pending requests, coordinator/fences and selected checkpoint head | D1 |
+| Full runtime checkpoint objects, sources/imports/reports | Private R2 |
+| Real Chelm/Harness execution and local Git | Active agent execution environment |
+| Canonical saved state | Validated selected checkpoint of the host runtime |
+| Source distribution | GitHub app repository and exact Sites source; never private runtime data |
 
-A report export is not a runtime backup. If app runtime backup is introduced, it must be in the deletion inventory; backup retention cannot silently undermine scratchbook reset.
+D1 is not a replacement canonical memory provider. R2 stores checkpoint objects; it is not a claim that the host runs in Workers. A page click can persist a request but cannot call the private Work scheduler or guarantee agent inference.
 
-Use the supported host hard-reset operation only on a runtime explicitly initialized resettable, with the required sandbox guard. An adopted external/shared runtime is never eligible automatically. Ordinary reset that archives memory fails this full-clear requirement.
+Fixture mode remains instant to explore and prominently labelled. Persistent local-agent mode needs no cloud checkpoint store; the hosted temporary-session route needs the host features tracked in Chelm #45–#48 and a verified tool/transfer binding.
 
-## 6. Resumable reset protocol
+## 2. Agent connection and identity
 
-There is no cross-system atomic transaction spanning D1, R2 and the external host. Implement a durable, retryable procedure with explicit acknowledgments.
+Use narrow supported app tools/HTTP/file transfer for pending inputs, checkpoint transfer, session authority and publication. Test actual access: a tool available to the chat is not automatically callable from a shell process. Prefer the platform-supported Site MCP/plugin route when available; no separate distributed Chelm MCP service is mandatory. A manual artifact path must be labelled separately.
 
-1. **Authorize and identify.** Admin sees scratchbook/runtime target, active work, scope and a clear destructive confirmation. Assign a reset request ID; identical retries use it.
-2. **Fence.** Advance/invalidate the notebook generation durably and mark resetting. Reject old-generation reads/writes and new research operations. Acquire the host-side fence before permitting any new assignment for the next generation.
-3. **Cancel and settle.** Cancel tasks, abandon/drain assignments and release owned work through supported host APIs. Reject late result/learning publication. Wait or refuse safely if upstream ownership rules prevent settlement.
-4. **Clear canonical runtime.** Verify sentinel, real paths, disposable ownership and absence of paths escaping scope; invoke supported sandbox hard reset. Ensure old runtime/assignment identities cannot authorize the new generation.
-5. **Purge app stores.** Delete old-generation D1 rows and R2 objects in bounded pages; remove app-owned generated files/logs/archives. Maintain content-free progress.
-6. **Reinitialize.** Recreate a fresh app-owned runtime with verified packages and shipped default purpose/profile, preserving deployment/admin/connection configuration.
-7. **Verify.** Query authoritative host status and controlled storage inventories. Confirm zero previous study content, unavailable old citations, rejected old work and a clean empty notebook.
-8. **Complete.** Mark success only after both host and app stores acknowledge completion; keep a minimal reset receipt and new generation.
+Sites request identity scopes user-owned notebook operations. Start owner-private and preserve audience on deployment. Site-scoped user IDs are authoritative only through the platform's trusted request path. Missing identity or possession of an app ID does not confer authorization.
 
-All steps must be restart-safe and idempotent. A host timeout is not proof that reset failed or succeeded: query authoritative state with the same request ID. If any controlled store cannot be cleared, remain reset_pending/failed with the exact remaining component and a retry path. The empty UI alone is never a success criterion.
+Configure administrators through deployment/operator configuration, never “first visitor becomes admin.” Every route/tool checks owner/admin scope server-side. Use authenticated same-origin POST, origin/CSRF checks as appropriate, input limits and duplicate-submission protection for mutations.
 
-Readers must stop serving the old generation once the fence is active, even if physical cleanup is pending. Destructive completion remains pending until actual deletion acknowledgments are obtained.
+Keep credentials in runtime settings, outside code/checkpoints/client bundles/reports. Do not issue arbitrary command/path/module/provider proxies. Optional remote service/GitHub adapters require explicit configuration and may not become hidden primary dependencies.
 
-Generation enforcement includes direct executor paths, not just browser routes. Revoke/version per-generation remote endpoint binding or worker credentials so an old agent cannot silently attach to the new runtime after hard reset. If vendor APIs cannot guarantee this, RN-10 must record an upstream blocker and cannot claim acceptance; do not patch private vendor internals.
+## 3. Persistence and publication
 
-Do not delete beyond the exact ownership root. Resolve/canonicalize paths and refuse symlinks, traversal or instance/archive locations that escape it. Never recursively remove a user-selected arbitrary directory.
+Use D1 for durable app requests, metadata, reset/session authority and selected checkpoint/projection references. Use R2 for private immutable bounded objects. Browser storage holds preferences only.
 
-## 7. Required hosted/reset acceptance
+A full runtime checkpoint preserves canonical history and host state, not just graph JSON or the instance repository. The host creates/restores it at a safe settled boundary. [Runtime checkpoints](RUNTIME_CHECKPOINTS.md) covers inventory, transport, coordination, failures and acceptance.
 
-Use disposable synthetic studies, then verify a real source-backed study separately.
+A local Git commit is only local completion. Upload/verify checkpoint and projection objects, then conditionally select their references in one coordinator transaction using generation, fence, owner/session, expiry and base revision. Keep new input and unacknowledged request IDs intact. Only then display “durably saved.”
 
-- Owner succeeds; anonymous, reader and forged-ID requests fail.
-- D1/R2 and canonical host state survive a normal deployment/reconnect.
-- A live published study processes sources, answers with retained citations and deepens on new evidence.
-- Reset while a worker is running prevents every late publication and learning attempt.
-- Old browser tabs and queued continuations cannot resurrect cleared content.
-- Gateway down, active lease, partial object deletion, response loss and process restart have honest states and safe retry.
-- A completed reset leaves no prior content in controlled search/export/citation/runtime/artifact views.
-- Repeated reset requests do not delete a newly created study under a later generation.
-- Redeploy and old import callbacks cannot silently restore previous data.
-- External/shared/non-sandbox roots and cross-owner targets are refused.
-- Content-free reset records may remain; no content-bearing backup is hidden from the deletion inventory.
+Data survives normal redeploy/browser changes. A missing checkpoint is not permission to create a new instance silently. Fixture loading is explicit; schema migrations and deployment never seed old research back into a cleared notebook.
 
-Actual hosted observations, structural checks and semantic review must be recorded separately. Fixture rendering or a green build proves neither live inference nor full reset.
+### Publishing the application
+
+1. Select the reviewed GitHub app commit and prepare a sanitized code-only source snapshot.
+2. Reuse or create Site identity only during authorized implementation/publication.
+3. Record exact returned project ID in the deployment checkout's .openai/hosting.json. Reusable sample source has no personal/fabricated ID.
+4. Declare D1/R2, configure owner/admin and runtime values through supported tools.
+5. Generate/review bounded schema-only migrations; keep fixture/seed loading separate.
+6. Build the supported Worker ES module at dist/server/index.js with default fetch handler and shared UI assets. No Python/Git process spawning in the Worker bundle.
+7. Validate source/build, synchronize/package, save/deploy through supported Sites tooling with audience preserved.
+8. Record GitHub source commit, Sites source commit, archive, saved version and deployment status.
+9. Validate actual auth/tool transfer, real study/checkpoint, new-session resume/deepen and reset.
+
+Do not assume GitHub pushes deploy Sites automatically. Never publish private checkpoints, source captures, runtime histories, caches or credentials as app code.
+
+Current app scope needs no hosted connector for external research apps: agents browse through their own available tools. If connectors are later added, use current Sites eligibility/consent requirements first.
+
+## 4. Full reset scope
+
+The target is the entire scratchbook and all controlled runtime/checkpoint data, not just one visible report.
+
+| State | Treatment |
+| --- | --- |
+| Studies/topics/source/cycle records and input queues | Purge all old-generation content |
+| Findings, conversations, questions, results and hypotheses | Purge |
+| Current and historical checkpoint objects, local Git history within them | Purge all controlled retained versions |
+| Partial uploads, staged projections/imports, generated reports and exports | Purge controlled namespaces |
+| Host canonical/operational data in reachable owned local runtime | Supported sandbox hard reset after session settlement |
+| App-created backups/archives/content-bearing logs | Purge verified app-owned scope |
+| Old worker authority/session token/head pointers | Invalidate before deletion |
+| Browser app-controlled caches | Invalidate by generation; clear controlled entries |
+| Reset receipt/epoch | Retain minimal content-free coordination |
+| Application code, verified vendor packages, shipped purpose/profile | Preserve |
+| Site identity, owner/admin binding and connection configuration | Preserve; revoke generation-specific credentials/authority |
+| Detached/downloaded copies and platform/provider backups outside app control | Outside physical deletion control; report accurately |
+
+GitHub files are not the default memory store. Removing files from Git history was one reason not to make same-source-repository storage the default. Full reset still must purge checkpoints containing local Git history; deleting only current D1 rows is insufficient.
+
+## 5. Reset procedure and states
+
+There is no single transaction across D1, R2 and local workspaces. Use a durable idempotent procedure with explicit component status:
+
+1. **Authorize.** Admin sees target, generation, active sessions, deletion scope and destructive confirmation. Allocate a stable reset request ID.
+2. **Fence.** Atomically advance reset generation, revoke active publishing authority and mark resetting. Reject old uploads/publications/continuations and new research starts for that generation.
+3. **Settle reachable work.** Stop/cancel owned host work through supported lifecycle. A stale local agent cannot publish even if it ignores cancellation.
+4. **Purge durable content.** Delete old-generation D1 research records and all R2 checkpoint/capture/report/staging versions in bounded pages. Repeat safely on partial failure.
+5. **Clean local copies.** Connected agents acknowledge supported sandbox hard reset of exact app-owned roots. Track unreachable/detached session copies as pending/unknown; never pretend the Site can remotely erase a lost workspace.
+6. **Prepare fresh state.** Leave an explicit empty new generation. A later authorized agent initializes a fresh guarded runtime from verified packages/default guidance; never restore a pre-reset checkpoint automatically.
+7. **Verify.** Inspect authoritative coordinator/object inventories, old citation/export lookups and late publication rejection. Confirm reachable local cleanup where in scope.
+8. **Report.** Durable purge completed and local-copy cleanup status are separate. Report full controlled cleanup only when required acknowledgments are present; never infer it from an empty UI.
+
+The Site can fence and purge its durable scratchbook without starting an always-on host. It cannot guarantee physical deletion of disconnected execution disks, downloaded copies or external backups. Explain that limitation directly in Admin instead of making a false all-data-erased claim.
+
+If durable deletion fails, remain reset_pending/failed with the precise store and retry action. If durable purge succeeds but connected local cleanup is missing, show that status explicitly. New generation work must not permit an old session to regain authority implicitly.
+
+An identical old reset retry must not erase a newer generation's study. Old app imports, cached tabs, lease renewals and upload callbacks must carry generation/revision and fail after reset. Keep only content-free progress/receipts.
+
+Local hard reset requires an explicitly disposable sandbox, canonicalized guarded root and supported host semantics. Refuse adopted/shared/external runtimes, symlinks/path traversal or instance/archive paths escaping scope. Never recursively delete an arbitrary user path.
+
+## 6. Acceptance
+
+- Owner/admin succeeds; anonymous/reader/forged-ID operations refuse.
+- Pending requests and selected study/checkpoint survive browser restart/redeploy.
+- Actual agent performs collection/analysis/cognition, checkpoint publication and fresh-session deepening.
+- An old session losing fence/expiry/reset cannot publish a checkpoint or learning result.
+- New input during a cycle survives conditional checkpoint/result publication.
+- Partial upload, head-response loss, concurrent restore and reset have safe idempotent recovery.
+- Durable purge removes old checkpoint versions/staging and content-bearing app state.
+- Old tabs/citation/export/import cannot recover or resurrect cleared content.
+- Reachable local copies are cleaned; unavailable-copy status is honest.
+- Repeated reset/deploy does not delete or reseed newer data.
+- Source/release/checkpoint artifacts contain no secrets, personal deployment IDs or private app data beyond the explicitly private runtime checkpoint payload.
+
+Actual hosted transport, real inference, structural integrity, semantic review and physical cleanup claims are distinct evidence categories. Green builds or fixture rendering prove none of the others.
